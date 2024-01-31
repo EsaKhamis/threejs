@@ -1,4 +1,5 @@
 import * as three from 'three';
+import gsap from 'gsap';
 
 // canvas
 const canvas: any = document.querySelector('.webgl');
@@ -6,38 +7,12 @@ const canvas: any = document.querySelector('.webgl');
 // scene
 const scene: three.Scene = new three.Scene();
 
-// group
-const group: three.Group = new three.Group();
+// object
+const geometry: three.BoxGeometry = new three.BoxGeometry(1, 1, 1);
+const material: three.MeshBasicMaterial = new three.MeshBasicMaterial({ color: 0x0000ff });
+const mesh: three.Mesh = new three.Mesh(geometry, material);
 
-const axesHelper = new three.AxesHelper(2);
-scene.add(axesHelper);
-scene.add(group);
-
-const cube1: three.Mesh = new three.Mesh(
-    new three.BoxGeometry(1, 1, 1),
-    new three.MeshBasicMaterial({ color: 0xff0000 })
-);
-
-const cube2: three.Mesh = new three.Mesh(
-    new three.BoxGeometry(1, 1, 1),
-    new three.MeshBasicMaterial({ color: 0x00ff00 })
-);
-
-const cube3: three.Mesh = new three.Mesh(
-    new three.BoxGeometry(1, 1, 1),
-    new three.MeshBasicMaterial({ color: 0x0000ff })
-);
-
-group.add(cube1);
-group.add(cube2);
-group.add(cube3);
-
-cube2.position.x = -2;
-cube3.position.x = 2;
-
-group.position.y = 1;
-group.scale.y = 2;
-group.rotation.y = 1;
+scene.add(mesh);
 
 const sizes = {
     width: 800,
@@ -58,3 +33,27 @@ const renderer: three.WebGLRenderer = new three.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 
 renderer.render(scene, camera);
+
+// const clock = new three.Clock();
+
+gsap.to(mesh.position, { duration: 1, delay: 1, x: 2 });
+gsap.to(mesh.position, { duration: 1, delay: 2, x: 0 });
+
+// animation
+const tick = () => {
+    // Clock
+    // const elapsedTime = clock.getElapsedTime();
+    // console.log(elapsedTime);
+
+    // camera.position.y = Math.sin(elapsedTime);
+    // camera.position.x = Math.cos(elapsedTime);
+
+    // camera.lookAt(mesh.position);
+
+    // render
+    renderer.render(scene, camera);
+
+    window.requestAnimationFrame(tick);
+}
+
+tick();
