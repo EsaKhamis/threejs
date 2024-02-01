@@ -45,7 +45,6 @@ window.addEventListener('dblclick', () => {
         }
     }
 });
-
 // canvas
 const canvas: any = document.querySelector('.webgl');
 
@@ -53,9 +52,19 @@ const canvas: any = document.querySelector('.webgl');
 const scene: three.Scene = new three.Scene();
 
 // object
-const geometry: three.BoxGeometry = new three.BoxGeometry(1, 1, 1, 5, 5, 5);
+// const geometry: three.BoxGeometry = new three.BoxGeometry(1, 1, 1, 5, 5, 5);
+const geometry: three.BufferGeometry = new three.BufferGeometry();
+const count = 50;
+const positionsArray = new Float32Array(count * 3 * 3);
+for (let i = 0; i < count * 3 * 3; i++) {
+    positionsArray[i] = (Math.random() - 0.5) * 4;
+}
+const positionsAttribute = new three.BufferAttribute(positionsArray, 3);
+geometry.setAttribute('position', positionsAttribute);
+
 const material: three.MeshBasicMaterial = new three.MeshBasicMaterial({
 	color: 0x0000ff,
+    wireframe: true,
 });
 const mesh: three.Mesh = new three.Mesh(geometry, material);
 
