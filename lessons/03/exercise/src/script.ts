@@ -5,6 +5,33 @@ import GUI from 'lil-gui';
 import gsap from 'gsap';
 
 /**
+ * Textures
+ */
+// const image = new Image();
+// const texture = new three.Texture(image);
+
+// image.onload = () => {
+//     // after the image loads, we set the texture image
+//     texture.needsUpdate = true;
+//     texture.colorSpace = three.SRGBColorSpace;
+// }
+// image.src = '/textures/door/color.jpg';
+const textureLoader = new three.TextureLoader();
+const texture = textureLoader.load(
+    '/textures/door/color.jpg',
+    () => {
+        console.log('loading texture');
+    },
+    () => {
+        console.log('loading progressing');
+    },
+    () => {
+        console.log('loading error');
+    }
+);
+texture.colorSpace = three.SRGBColorSpace;
+
+/**
  * Debug
  */
 const gui = new GUI({
@@ -75,18 +102,11 @@ const scene: three.Scene = new three.Scene();
 
 // object
 const geometry: three.BoxGeometry = new three.BoxGeometry(1, 1, 1, debugObject.subdivions, debugObject.subdivions, debugObject.subdivions);
-// const geometry: three.BufferGeometry = new three.BufferGeometry();
-// const count = 50;
-// const positionsArray = new Float32Array(count * 3 * 3);
-// for (let i = 0; i < count * 3 * 3; i++) {
-//     positionsArray[i] = (Math.random() - 0.5) * 4;
-// }
-// const positionsAttribute = new three.BufferAttribute(positionsArray, 3);
-// geometry.setAttribute('position', positionsAttribute);
 
 const material: three.MeshBasicMaterial = new three.MeshBasicMaterial({
-	color: debugObject.color,
-    wireframe: true,
+	// color: debugObject.color,
+    map: texture,
+    // wireframe: true,
 });
 const mesh: three.Mesh = new three.Mesh(geometry, material);
 
@@ -119,15 +139,7 @@ cubeTweaks.add(debugObject, 'subdivions').min(1).max(20).step(1).onFinishChange(
 // camera
 // fov should be 45-75
 const camera: three.PerspectiveCamera = new three.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-// const aspectRatio = sizes.width / sizes.height;
-// const camera: three.OrthographicCamera = new three.OrthographicCamera(
-//   -1 * aspectRatio,
-//   1 * aspectRatio,
-//   1,
-//   -1,
-//   0.1,
-//   100
-// );
+
 camera.position.z = 3;
 camera.position.y = 2;
 camera.position.x = 2;
@@ -148,18 +160,6 @@ const clock = new three.Clock();
 
 // animation
 const tick = () => {
-	// Clock
-	//   const elapsedTime = clock.getElapsedTime();
-
-	//   mesh.rotation.y = elapsedTime;
-
-	// update camera
-	// camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
-	// camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
-	// camera.position.y = Math.cos(cursor.y * Math.PI * 2) * 3;
-	// camera.position.z = Math.sin(cursor.y * Math.PI * 2) * 3;
-	// camera.lookAt(mesh.position);
-
 	// update controls
 	controls.update();
 	// render
