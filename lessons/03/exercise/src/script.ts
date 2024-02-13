@@ -5,33 +5,6 @@ import GUI from 'lil-gui';
 import gsap from 'gsap';
 
 /**
- * Textures
- */
-// const image = new Image();
-// const texture = new three.Texture(image);
-
-// image.onload = () => {
-//     // after the image loads, we set the texture image
-//     texture.needsUpdate = true;
-//     texture.colorSpace = three.SRGBColorSpace;
-// }
-// image.src = '/textures/door/color.jpg';
-const textureLoader = new three.TextureLoader();
-const texture = textureLoader.load(
-    '/textures/door/color.jpg',
-    () => {
-        console.log('loading texture');
-    },
-    () => {
-        console.log('loading progressing');
-    },
-    () => {
-        console.log('loading error');
-    }
-);
-texture.colorSpace = three.SRGBColorSpace;
-
-/**
  * Debug
  */
 const gui = new GUI({
@@ -94,6 +67,53 @@ window.addEventListener('dblclick', () => {
         }
     }
 });
+
+/**
+ * Textures
+ */
+
+const loadingManager = new three.LoadingManager();
+
+
+// loadingManager.onStart = () => {
+//     console.log('loading started');
+// };
+// loadingManager.onLoad = () => {
+//     console.log('loading finished');
+// };
+// loadingManager.onProgress = () => {
+//     console.log('loading progressing');
+// };
+// loadingManager.onError = () => {
+//     console.log('loading error');
+// };
+
+const textureLoader = new three.TextureLoader(loadingManager);
+const colourTexture = textureLoader.load('textures/minecraft.png'); // '/textures/door/color.jpg');
+colourTexture.colorSpace = three.SRGBColorSpace;
+// const alphaTexture = textureLoader.load('/textures/door/alpha.jpg');
+// const heightTexture = textureLoader.load('/textures/door/height.jpg');
+// const normalTexture = textureLoader.load('/textures/door/normal.jpg');
+// const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg');
+// const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg');
+// const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg');
+
+// colourTexture.repeat.x = 2;
+// colourTexture.repeat.y = 3;
+// colourTexture.wrapS = three.MirroredRepeatWrapping; 
+// colourTexture.wrapT = three.MirroredRepeatWrapping;
+
+// colourTexture.offset.x = 0.5; 
+// colourTexture.offset.y = 0.5;
+
+// colourTexture.rotation = Math.PI * 0.25;
+// colourTexture.center.x = 0.5;
+// colourTexture.center.y = 0.5;
+
+colourTexture.minFilter = three.NearestFilter; 
+colourTexture.magFilter = three.NearestFilter;
+colourTexture.generateMipmaps = false;
+
 // canvas
 const canvas: any = document.querySelector('.webgl');
 
@@ -104,9 +124,7 @@ const scene: three.Scene = new three.Scene();
 const geometry: three.BoxGeometry = new three.BoxGeometry(1, 1, 1, debugObject.subdivions, debugObject.subdivions, debugObject.subdivions);
 
 const material: three.MeshBasicMaterial = new three.MeshBasicMaterial({
-	// color: debugObject.color,
-    map: texture,
-    // wireframe: true,
+    map: colourTexture,
 });
 const mesh: three.Mesh = new three.Mesh(geometry, material);
 
