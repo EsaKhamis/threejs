@@ -1,8 +1,9 @@
 import * as three from 'three';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import './styles.css';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import GUI from 'lil-gui';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 /**
  * Debug
@@ -40,6 +41,25 @@ window.addEventListener('mousemove', (event) => {
 	cursor.y = -(event.clientY / sizes.height - 0.5);
 });
 
+/**
+ * Base
+ */
+// Canvas
+const canvas = document.querySelector('canvas.webgl') as HTMLCanvasElement;
+const scene = new three.Scene();
+const camera = new three.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+const renderer = new three.WebGLRenderer({
+    canvas: canvas,
+});
+camera.position.x = 1
+camera.position.y = 1
+camera.position.z = 2
+scene.add(camera);
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
+renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 window.addEventListener('resize', () => {
     // update sizes
     sizes.width = window.innerWidth;
@@ -68,177 +88,71 @@ window.addEventListener('dblclick', () => {
     }
 });
 
+// Material
+const cube = new three.Mesh(
+    new three.BoxGeometry(1, 1, 1),
+    new three.MeshBasicMaterial({ color: debugObject.color })
+);
 
-/**
- * Textures
- */
-const loadingManager = new three.LoadingManager();
+cube.position.z = -1.5;
+cube.position.y = -1.5;
 
-const textureLoader = new three.TextureLoader(loadingManager);
-
-const colourTexture = textureLoader.load('/textures/door/color.jpg');
-colourTexture.colorSpace = three.SRGBColorSpace;
-const alphaTexture = textureLoader.load('/textures/door/alpha.jpg');
-const heightTexture = textureLoader.load('/textures/door/height.jpg');
-const normalTexture = textureLoader.load('/textures/door/normal.jpg');
-const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg');
-const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg');
-const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg');
-
-const matcapTexture = textureLoader.load('./textures/matcaps/8.png');
-
-const gradientTexture = textureLoader.load('/textures/gradients/5.jpg');
-
-// canvas
-const canvas: any = document.querySelector('.webgl');
-
-// scene
-const scene: three.Scene = new three.Scene();
-
-// environment map
-const rgbeloader = new RGBELoader();
-rgbeloader.load('./textures/environmentMap/2k.hdr', (environmentMap) => {
-	environmentMap.mapping = three.EquirectangularReflectionMapping;
-	scene.background = environmentMap;
-    scene.environment = environmentMap;
+gui.addColor(debugObject, 'color').onChange(() => {
+    cube.material.color.set(debugObject.color);
 });
+// scene.add(cube);
 
-// lights
-// const ambientLight: three.AmbientLight = new three.AmbientLight(0xffffff, 0.5);
-// scene.add(ambientLight);
+// const axesHelper = new three.AxesHelper();
+// scene.add(axesHelper);
 
-// const pointLight: three.PointLight = new three.PointLight(0xffffff, 30);
-// pointLight.position.x = 2;
-// pointLight.position.y = 3;
-// pointLight.position.z = 4;
-// scene.add(pointLight);
+const textureLoader = new three.TextureLoader();
+const matcapTexture = textureLoader.load('/textures/matcaps/5.png');
+matcapTexture.colorSpace = three.SRGBColorSpace;
 
-// object
+// Fonts
+const fontLoader = new FontLoader();
 
-const boxGeometry: three.BoxGeometry = new three.BoxGeometry(1, 1, 1, debugObject.subdivions, debugObject.subdivions, debugObject.subdivions);
-const sphereGeometry: three.SphereGeometry = new three.SphereGeometry(0.5, 64, 64);
-const planeGeometry: three.PlaneGeometry = new three.PlaneGeometry(1, 1, 100, 100);
-const taurusGeometry: three.TorusGeometry = new three.TorusGeometry(0.3, 0.2, 64, 128);
+fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
+    const textGeometry = new TextGeometry(
+        'Esa is the Best!',
+        {
+            font,
+            size: 0.5,
+            height: 0.2,
+            curveSegments: 10,
+            bevelEnabled: true,
+            bevelThickness: 0.03,
+            bevelSize: 0.02,
+            bevelOffset: 0,
+            bevelSegments: 4,
+        }
+    );
 
+    const textMaterial = new three.MeshMatcapMaterial({ matcap: matcapTexture });
+    const text = new three.Mesh(textGeometry, textMaterial);
 
-// const material: three.MeshBasicMaterial = new three.MeshBasicMaterial();
-// const material: three.MeshNormalMaterial = new three.MeshNormalMaterial();
-// const material: three.MeshMatcapMaterial = new three.MeshMatcapMaterial();
-// const material: any = new three.MeshDepthMaterial();
-// const material: three.MeshLambertMaterial = new three.MeshLambertMaterial();
-// const material: three.MeshPhongMaterial = new three.MeshPhongMaterial();
-// material.shininess = 100;
-// material.specular = new three.Color('orange');
-// const material: three.MeshToonMaterial = new three.MeshToonMaterial();
-// gradientTexture.minFilter = three.NearestFilter;
-// gradientTexture.magFilter = three.NearestFilter;
-// gradientTexture.generateMipmaps = false;
-// material.gradientMap = gradientTexture;
-// const material: three.MeshStandardMaterial = new three.MeshStandardMaterial();
-// material.metalness = 1;
-// material.roughness = 1;
-// material.map = colourTexture;
-// material.aoMap = ambientOcclusionTexture;
-// material.aoMapIntensity = 1;
-// material.displacementMap = heightTexture;
-// material.displacementScale = 0.05;
-// material.metalnessMap = metalnessTexture;
-// material.roughnessMap = roughnessTexture;
-// material.normalMap = normalTexture;
-// material.normalScale.set(0.5, 0.5);
-// material.transparent = true;
-// material.alphaMap = alphaTexture;
+    textGeometry.center();
 
-const material: three.MeshPhysicalMaterial = new three.MeshPhysicalMaterial();
-material.metalness = 1;
-material.roughness = 1;
-material.map = colourTexture;
-material.aoMap = ambientOcclusionTexture;
-material.aoMapIntensity = 1;
-material.displacementMap = heightTexture;
-material.displacementScale = 0.05;
-material.metalnessMap = metalnessTexture;
-material.roughnessMap = roughnessTexture;
-material.normalMap = normalTexture;
-material.normalScale.set(0.5, 0.5);
-material.transparent = true;
-material.alphaMap = alphaTexture;
+    gui.addColor(debugObject, 'color').onChange(() => {
+        text.material.color.set(debugObject.color);
+    });
+    // textMaterial.wireframe = true;
+    scene.add(text);
 
-// material.clearcoat = 1;
-// material.clearcoatRoughness = 1;
-// material.sheen =1;
-// material.sheenRoughness = 1;   
-// material.sheenColor.set(1,1,1);
+    const donutGeometry = new three.TorusGeometry(0.3, 0.2, 20, 45);
 
-// gui.add(material, 'sheen').min(0).max(1).step(0.0001);
-// gui.add(material, 'sheenRoughness').min(0).max(1).step(0.0001);
-
-
-// gui.add(material, 'clearcoat').min(0).max(1).step(0.0001);
-// gui.add(material, 'clearcoatRoughness').min(0).max(1).step(0.0001);
-
-// material.iridescence = 1;
-// material.iridescenceIOR = 1;
-// material.iridescenceThicknessRange = [100, 800];
-
-// gui.add(material, 'iridescence').min(0).max(1).step(0.0001);
-// gui.add(material, 'iridescenceIOR').min(0).max(2.333).step(0.0001);
-// gui.add(material.iridescenceThicknessRange, '0').min(0).max(1000).step(1);
-// gui.add(material.iridescenceThicknessRange, '1').min(0).max(1000).step(1);
-
-material.transmission = 1;
-material.ior = 1.5;
-material.thickness = 0.5;
-
-gui.add(material, 'transmission').min(0).max(1).step(0.0001);
-gui.add(material, 'ior').min(0).max(10).step(0.0001);
-gui.add(material, 'thickness').min(0).max(1).step(0.0001);
-
-gui.add(material, 'wireframe');
-gui.add(material, 'aoMapIntensity').min(0).max(10).step(0.0001);
-gui.add(material, 'displacementScale').min(0).max(1).step(0.0001);
-
-gui.add(material, 'metalness').min(0).max(1).step(0.0001);
-gui.add(material, 'roughness').min(0).max(1).step(0.0001);
-
-
-// material.color = new three.Color('red');
-// material.wireframe = true;
-// material.flatShading = true;
-// material.transparent = true;
-// material.map = colourTexture;
-// material.alphaMap = alphaTexture;
-material.side = three.DoubleSide;
-// material.matcap = matcapTexture;
-
-const sphereMesh: three.Mesh = new three.Mesh(sphereGeometry, material);
-const planeMesh: three.Mesh = new three.Mesh(planeGeometry, material);
-const taurusMesh: three.Mesh = new three.Mesh(taurusGeometry, material);
-
-sphereMesh.position.x = -1.5;
-taurusMesh.position.x = 1.5;
-
-scene.add(sphereMesh, planeMesh, taurusMesh);
-
-// camera
-// fov should be 45-75
-const camera: three.PerspectiveCamera = new three.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-
-camera.position.z = 3;
-camera.position.y = 2;
-camera.position.x = 2;
-camera.lookAt(sphereMesh.position);
-scene.add(camera);
-
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.update();
-// renderer
-const renderer: three.WebGLRenderer = new three.WebGLRenderer({
-	canvas: canvas,
+    for (let i=0; i<1000; i++) {
+        const donut = new three.Mesh(donutGeometry, textMaterial);
+        donut.position.x = (Math.random() - 0.5) * 25;
+        donut.position.y = (Math.random() - 0.5) * 25;
+        donut.position.z = (Math.random() - 0.5) * 25;
+        donut.rotation.x = Math.random() * Math.PI;
+        donut.rotation.y = Math.random() * Math.PI;
+        const scale = Math.random();
+        donut.scale.set(scale, scale, scale);
+        scene.add(donut);
+    }
 });
-
-renderer.setSize(sizes.width, sizes.height);
 
 const clock = new three.Clock();
 
@@ -246,17 +160,11 @@ const clock = new three.Clock();
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
 
-    sphereMesh.rotation.y = 0.1 * elapsedTime;
-    planeMesh.rotation.y = 0.1 * elapsedTime;
-    taurusMesh.rotation.y = 0.1 * elapsedTime;
+    // Update controls
+    controls.update();
 
-    sphereMesh.rotation.x = -0.15 * elapsedTime;
-    planeMesh.rotation.x = -0.15 * elapsedTime;
-    taurusMesh.rotation.x = -0.15 * elapsedTime;
-	// update controls
-	controls.update();
-	// render
-	renderer.render(scene, camera);
+    // Render
+    renderer.render(scene, camera);
 
 	window.requestAnimationFrame(tick);
 };
