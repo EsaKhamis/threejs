@@ -4,16 +4,20 @@
   "main": "./src/index.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "deploy": "vercel --prod"
   },
   "devDependencies": {
     "vite": "^5.0.12"
   },
   "dependencies": {
     "@types/three": "^0.160.0",
+    "esbuild": "^0.20.1",
     "gsap": "3.12",
     "lil-gui": "^0.19.1",
     "three": "^0.160.1",
-    "typescript": "^5.3.3"
-  }
+    "typescript": "^5.3.3",
+    "vercel": "^33.5.3"
+  },
+  "types": "dist/index.d.ts"
 }

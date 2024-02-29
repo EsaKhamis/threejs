@@ -106,7 +106,7 @@ gui.addColor(debugObject, 'color').onChange(() => {
 // scene.add(axesHelper);
 
 const textureLoader = new three.TextureLoader();
-const matcapTexture = textureLoader.load('/textures/matcaps/5.png');
+const matcapTexture = textureLoader.load('/textures/matcaps/8.png');
 matcapTexture.colorSpace = three.SRGBColorSpace;
 
 // Fonts
@@ -114,7 +114,7 @@ const fontLoader = new FontLoader();
 
 fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
     const textGeometry = new TextGeometry(
-        'Esa is the Best!',
+        'esa is the best',
         {
             font,
             size: 0.5,
@@ -154,12 +154,8 @@ fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
     }
 });
 
-const clock = new three.Clock();
-
 // animation
 const tick = () => {
-    const elapsedTime = clock.getElapsedTime();
-
     // Update controls
     controls.update();
 
