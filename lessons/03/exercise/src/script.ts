@@ -26,7 +26,7 @@ const sizes = {
 };
 
 const debugObject: any = {
-    color: '#d67aab',
+    color: '#e8b4e9',
     subdivions: 3,
 };
 
@@ -106,7 +106,7 @@ gui.addColor(debugObject, 'color').onChange(() => {
 // scene.add(axesHelper);
 
 const textureLoader = new three.TextureLoader();
-const matcapTexture = textureLoader.load('/textures/matcaps/8.png');
+const matcapTexture = textureLoader.load('/textures/matcaps/5.png');
 matcapTexture.colorSpace = three.SRGBColorSpace;
 
 // Fonts
