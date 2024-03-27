@@ -1,6 +1,7 @@
 import * as three from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
 import './styles.css';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import GUI from 'lil-gui';
@@ -122,8 +123,37 @@ pointLight.position.z = 1;
 scene.add(pointLight);
 
 const rectAreaLight = new three.RectAreaLight(0x4e00ff, 6, 1, 1);
+rectAreaLight.position.set(-1.5, 0, 1.5);
+rectAreaLight.lookAt(new three.Vector3());
 scene.add(rectAreaLight);
 
+// spotlight
+const spotLight = new three.SpotLight(0x78ff00, 4.5,10, Math.PI * 0.1, 0.25, 1);
+spotLight.position.set(0, 2, 3);
+scene.add(spotLight);
+
+scene.add(spotLight.target);
+
+spotLight.target.position.x = -1.75;
+
+/**
+ * Helpers
+ */
+
+const hemisphereLightHelper = new three.HemisphereLightHelper(hemisphereLight, 0.2);
+scene.add(hemisphereLightHelper);
+
+const directionalLightHelper = new three.DirectionalLightHelper(directionalLight, 0.2);
+scene.add(directionalLightHelper);
+
+const pointLightHelper = new three.PointLightHelper(pointLight, 0.2);
+scene.add(pointLightHelper);
+
+const spotLightHelper = new three.SpotLightHelper(spotLight);
+scene.add(spotLightHelper);
+
+const rectAreaLightHelper = new RectAreaLightHelper(rectAreaLight);
+scene.add(rectAreaLightHelper);
 
 // const axesHelper = new three.AxesHelper();
 // scene.add(axesHelper);
